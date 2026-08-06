@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OMDb Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <nav class="nav" aria-label="Primary navigation">
+          <a class="brand" href="#">OMDb Explorer</a>
+          <div class="nav-links">
+            <a class="nav-link" href="#results">Browse</a>
+            <a class="nav-link" href="#search-form">Search</a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Discover your next favorite watch</p>
+            <h1>Search movies, series, and games from the OMDb catalog.</h1>
+            <p class="hero-text">
+              Browse a live database of titles with instant search, smart filtering, and a clean experience inspired by the OMDb experience.
+            </p>
+            <div class="hero-badges" aria-label="Highlights">
+              <span>Live OMDb data</span>
+              <span>Instant results</span>
+              <span>Type filters</span>
+            </div>
+          </div>
+
+          <form id="search-form" class="search-card">
+            <div class="search-stack">
+              <label class="sr-only" for="search-input">Search title</label>
+              <input
+                id="search-input"
+                name="query"
+                type="text"
+                placeholder="Try 'Marvel', 'Batman', or 'Star Wars'"
+                autocomplete="off"
+              />
+            </div>
+            <button type="submit">Search</button>
+          </form>
+        </section>
+
+        <section class="toolbar" aria-label="Results controls">
+          <div class="rating-control">
+            <label for="rating-slider">Minimum rating: <span id="rating-value">1.0</span></label>
+            <input id="rating-slider" type="range" min="1" max="10" step="0.5" value="1" />
+          </div>
+          <div class="rating-control">
+            <label for="sort-select">Sort by release</label>
+            <select id="sort-select">
+              <option value="default">Default</option>
+              <option value="newest">Newest first</option>
+            </select>
+          </div>
+          <p id="status" class="status" aria-live="polite">Start typing to explore titles.</p>
+        </section>
+
+        <section id="results" class="results-section" aria-live="polite">
+          <div id="loading" class="loading hidden" role="status" aria-label="Loading results">
+            <div class="spinner"></div>
+            <span>Loading results…</span>
+          </div>
+          <div id="results-grid" class="results-grid"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-brand" aria-label="Personal logo">
+          <span class="footer-logo">CR</span>
+          <p>Built with HTML, CSS, and the OMDb API.</p>
+        </div>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
