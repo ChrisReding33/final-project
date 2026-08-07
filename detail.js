@@ -29,6 +29,11 @@ function formatBoxOffice(value) {
   return `$${value.toLocaleString()} million`;
 }
 
+function buildOmdbUrl(queryString) {
+  const omdbUrl = `https://www.omdbapi.com/?apikey=${encodeURIComponent(apiKey)}${queryString}`;
+  return `https://api.allorigins.win/raw?url=${encodeURIComponent(omdbUrl)}`;
+}
+
 async function loadMovieDetails(movieId) {
   if (!movieId) {
     detailContent.innerHTML = '<p>No movie selected.</p>';
@@ -38,7 +43,7 @@ async function loadMovieDetails(movieId) {
   detailContent.innerHTML = '<p>Loading movie details…</p>';
 
   try {
-    const response = await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(apiKey)}&i=${encodeURIComponent(movieId)}`);
+    const response = await fetch(buildOmdbUrl(`&i=${encodeURIComponent(movieId)}`));
     const data = await response.json();
 
     if (data.Response !== 'True') {

@@ -54,6 +54,11 @@ function formatBoxOffice(value) {
   return `$${value.toLocaleString()} million`;
 }
 
+function buildOmdbUrl(queryString) {
+  const omdbUrl = `https://www.omdbapi.com/?apikey=${encodeURIComponent(apiKey)}${queryString}`;
+  return `https://api.allorigins.win/raw?url=${encodeURIComponent(omdbUrl)}`;
+}
+
 function filterAndSortResults(items, query, minimumRating, sortOption) {
   const trimmedQuery = typeof query === 'string' ? query.trim().toLowerCase() : '';
   const minimum = Number(minimumRating);
@@ -143,7 +148,7 @@ async function enrichResults(items) {
   const detailedResults = await Promise.all(
     items.map(async (item) => {
       try {
-        const response = await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(apiKey)}&i=${encodeURIComponent(item.imdbID)}`);
+        const response = await fetch(buildOmdbUrl(`&i=${encodeURIComponent(item.imdbID)}`));
         const data = await response.json();
         return {
           ...item,
@@ -174,7 +179,7 @@ async function searchMovies(query) {
   setStatus(`Searching for “${trimmedQuery}”...`);
 
   try {
-    const response = await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(apiKey)}&s=${encodeURIComponent(trimmedQuery)}`);
+    const response = await fetch(buildOmdbUrl(`&s=${encodeURIComponent(trimmedQuery)}`));
     const data = await response.json();
 
     if (requestId !== activeRequestId) {
