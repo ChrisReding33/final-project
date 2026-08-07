@@ -67,6 +67,14 @@ function filterAndSortResults(items, query, minimumRating, sortOption) {
 
     return matchesQuery && matchesRating;
   }).sort((a, b) => {
+    if (sortOption === 'rating' || sortOption === 'default') {
+      const ratingA = parseRating(a.imdbRating);
+      const ratingB = parseRating(b.imdbRating);
+      const safeRatingA = ratingA === null ? -1 : ratingA;
+      const safeRatingB = ratingB === null ? -1 : ratingB;
+      return safeRatingB - safeRatingA;
+    }
+
     if (sortOption === 'newest') {
       const yearA = Number(a.Year) || 0;
       const yearB = Number(b.Year) || 0;
@@ -74,32 +82,13 @@ function filterAndSortResults(items, query, minimumRating, sortOption) {
     }
 
     return 0;
-  });
+  }).slice(0, 12);
 }
 
 function renderResults(items) {
   if (!resultsGrid) {
     return;
   }
-
-  debounceTimer = setTimeout(() => searchMovies(query), 350);
-};
-
-searchForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  searchMovies(searchInput.value);
-});
-
-ratingSlider.addEventListener('input', () => {
-  ratingValue.textContent = Number(ratingSlider.value).toFixed(1);
-  renderResults(filterResults());
-});
-
-sortSelect.addEventListener('change', () => {
-  renderResults(filterResults());
-});
-
-renderResults([]);
 
   resultsGrid.innerHTML = '';
 
@@ -136,7 +125,7 @@ renderResults([]);
   });
 
   resultsGrid.appendChild(fragment);
-
+}
 
 function refreshResults() {
   const query = searchInput ? searchInput.value : '';

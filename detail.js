@@ -53,6 +53,7 @@ async function loadMovieDetails(movieId) {
       : 'https://placehold.co/600x900?text=No+Poster';
 
     detailContent.innerHTML = `
+      <button type="button" class="back-button" id="back-to-results">← Back to results</button>
       <div class="detail-layout">
         <img class="detail-poster" src="${poster}" alt="${data.Title} poster" />
         <div class="detail-info">
@@ -62,6 +63,10 @@ async function loadMovieDetails(movieId) {
           <p><strong>Runtime:</strong> ${data.Runtime || 'N/A'}</p>
           <p><strong>Genre:</strong> ${data.Genre || 'N/A'}</p>
           <p><strong>Director:</strong> ${data.Director || 'N/A'}</p>
+          <p><strong>Writer:</strong> ${data.Writer || 'N/A'}</p>
+          <p><strong>Actors:</strong> ${data.Actors || 'N/A'}</p>
+          <p><strong>Language:</strong> ${data.Language || 'N/A'}</p>
+          <p><strong>Awards:</strong> ${data.Awards || 'N/A'}</p>
           <p><strong>Rated:</strong> ${data.Rated || 'N/A'}</p>
           <p><strong>IMDb Rating:</strong> ${rating !== null ? rating.toFixed(1) : 'N/A'}</p>
           <p><strong>Box Office:</strong> ${boxOfficeValue !== null ? formatBoxOffice(boxOfficeValue) : 'N/A'}</p>
@@ -69,6 +74,17 @@ async function loadMovieDetails(movieId) {
         </div>
       </div>
     `;
+
+    const backButton = document.getElementById('back-to-results');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      });
+    }
   } catch (error) {
     detailContent.innerHTML = '<p>Unable to load this title right now.</p>';
   }
