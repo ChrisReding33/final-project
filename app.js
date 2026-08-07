@@ -83,7 +83,7 @@ function renderResults(items) {
   }
 
   debounceTimer = setTimeout(() => searchMovies(query), 350);
-});
+};
 
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -136,14 +136,16 @@ renderResults([]);
   });
 
   resultsGrid.appendChild(fragment);
-}
 
-function filterResults() {
-  const minimumRating = Number(ratingSlider.value);
-  return allResults.filter((item) => {
-    const ratingValue = Number(item.imdbRating);
-    return Number.isFinite(ratingValue) && ratingValue >= minimumRating;
-  });
+
+function refreshResults() {
+  const query = searchInput ? searchInput.value : '';
+  const minimumRating = ratingSlider ? ratingSlider.value : 1;
+  const sortOption = sortSelect ? sortSelect.value : 'default';
+  const visibleResults = filterAndSortResults(allResults, query, minimumRating, sortOption);
+
+  renderResults(visibleResults);
+  setStatus(`Showing ${visibleResults.length} results.`);
 }
 
 async function enrichResults(items) {
@@ -197,8 +199,7 @@ async function searchMovies(query) {
         return;
       }
 
-      renderResults(filterResults());
-      setStatus(`Showing ${filterResults().length} results.`);
+      refreshResults();
     } else {
       allResults = [];
       await wait(loadingDelayMs);
@@ -227,34 +228,58 @@ async function searchMovies(query) {
   }
 }
 
-searchInput.addEventListener('input', () => {
-  clearTimeout(debounceTimer);
-  const query = searchInput.value.trim();
-
-  if (!query) {
-    allResults = [];
-    renderResults([]);
-    setStatus('Start typing to explore titles.');
+function initializeControls() {
+  if (!searchInput || !searchForm || !ratingSlider || !ratingValue || !sortSelect) {
     return;
   }
 
-  if (query.length < 3) {
-    setStatus('Type at least 3 characters to search.');
-    return;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const query = searchInput.value.trim();
+
+    if (!query) {
+      allResults = [];
+      renderResults([]);
+      setStatus('Start typing to explore titles.');
+      return;
+    }
+
+    if (query.length < 3) {
+      setStatus('Type at least 3 characters to search.');
+      return;
+    }
+
+    debounceTimer = setTimeout(() => searchMovies(query), 350);
+  });
+
+  searchForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    searchMovies(searchInput.value);
+  });
+
+  ratingSlider.addEventListener('input', () => {
+    ratingValue.textContent = Number(ratingSlider.value).toFixed(1);
+    refreshResults();
+  });
+
+  sortSelect.addEventListener('change', () => {
+    refreshResults();
+  });
+}
+
+if (isBrowser) {
+  initializeControls();
+  if (ratingValue && ratingSlider) {
+    ratingValue.textContent = Number(ratingSlider.value).toFixed(1);
   }
+  renderResults([]);
+}
 
-  debounceTimer = setTimeout(() => searchMovies(query), 350);
-});
-
-searchForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  searchMovies(searchInput.value);
-});
-
-ratingSlider.addEventListener('input', () => {
-  ratingValue.textContent = Number(ratingSlider.value).toFixed(1);
-  renderResults(filterResults());
-});
-
-renderResults([]);
-
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    filterAndSortResults,
+    parseRating,
+    parseBoxOffice,
+    formatBoxOffice
+  };
+}
