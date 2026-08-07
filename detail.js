@@ -34,6 +34,17 @@ function buildOmdbUrl(queryString) {
   return `https://api.allorigins.win/raw?url=${encodeURIComponent(omdbUrl)}`;
 }
 
+async function fetchOmdbJson(queryString) {
+  const response = await fetch(buildOmdbUrl(queryString));
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return { Response: 'False', Error: 'Unable to parse OMDb response.' };
+  }
+}
+
 async function loadMovieDetails(movieId) {
   if (!movieId) {
     detailContent.innerHTML = '<p>No movie selected.</p>';
@@ -43,8 +54,7 @@ async function loadMovieDetails(movieId) {
   detailContent.innerHTML = '<p>Loading movie details…</p>';
 
   try {
-    const response = await fetch(buildOmdbUrl(`&i=${encodeURIComponent(movieId)}`));
-    const data = await response.json();
+    const data = await fetchOmdbJson(`&i=${encodeURIComponent(movieId)}`);
 
     if (data.Response !== 'True') {
       detailContent.innerHTML = '<p>Unable to load this title right now.</p>';

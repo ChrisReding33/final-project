@@ -59,6 +59,17 @@ function buildOmdbUrl(queryString) {
   return `https://api.allorigins.win/raw?url=${encodeURIComponent(omdbUrl)}`;
 }
 
+async function fetchOmdbJson(queryString) {
+  const response = await fetch(buildOmdbUrl(queryString));
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return { Response: 'False', Error: 'Unable to parse OMDb response.' };
+  }
+}
+
 function filterAndSortResults(items, query, minimumRating, sortOption) {
   const trimmedQuery = typeof query === 'string' ? query.trim().toLowerCase() : '';
   const minimum = Number(minimumRating);
@@ -148,8 +159,7 @@ async function enrichResults(items) {
   const detailedResults = await Promise.all(
     items.map(async (item) => {
       try {
-        const response = await fetch(buildOmdbUrl(`&i=${encodeURIComponent(item.imdbID)}`));
-        const data = await response.json();
+        const data = await fetchOmdbJson(`&i=${encodeURIComponent(item.imdbID)}`);
         return {
           ...item,
           imdbRating: data.imdbRating || item.imdbRating,
@@ -179,8 +189,7 @@ async function searchMovies(query) {
   setStatus(`Searching for “${trimmedQuery}”...`);
 
   try {
-    const response = await fetch(buildOmdbUrl(`&s=${encodeURIComponent(trimmedQuery)}`));
-    const data = await response.json();
+    const data = await fetchOmdbJson(`&s=${encodeURIComponent(trimmedQuery)}`);
 
     if (requestId !== activeRequestId) {
       return;
