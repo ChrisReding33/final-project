@@ -111,14 +111,16 @@ function renderResults(items) {
     const priceValue = parseBoxOffice(item.BoxOffice);
 
     card.innerHTML = `
-      <img src="${poster}" alt="${item.Title} poster" />
-      <div class="card-body">
-        <h3>${item.Title}</h3>
-        <p>${item.Year}</p>
-        <p>${item.Type}</p>
-        <p>⭐ ${rating !== null ? rating.toFixed(1) : 'N/A'}</p>
-        <p>💰 ${priceValue !== null ? formatBoxOffice(priceValue) : 'N/A'}</p>
-      </div>
+      <a class="card-link" href="detail.html?id=${encodeURIComponent(item.imdbID || '')}">
+        <img src="${poster}" alt="${item.Title} poster" />
+        <div class="card-body">
+          <h3>${item.Title}</h3>
+          <p>${item.Year}</p>
+          <p>${item.Type}</p>
+          <p>⭐ ${rating !== null ? rating.toFixed(1) : 'N/A'}</p>
+          <p>💰 ${priceValue !== null ? formatBoxOffice(priceValue) : 'N/A'}</p>
+        </div>
+      </a>
     `;
 
     fragment.appendChild(card);
