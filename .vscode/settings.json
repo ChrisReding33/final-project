@@ -2,5 +2,8 @@
     "cSpell.words": [
         "imdb",
         "topbar"
-    ]
+    ],
+    "git.decorations.enabled": false,
+    "editor.codeLens": false,
+    "editor.glyphMargin": false
 }
